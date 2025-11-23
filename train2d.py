@@ -16,8 +16,7 @@ import warnings
 from vxm2d import VoxelMorph2D, SpatialTransformer2D
 import losses2d
 import utils2d
-sys.path.append(r'E:\SmileCode\data')
-import datasets2d
+from data import datasets2d
 
 
 def same_seeds(seed):
@@ -55,19 +54,19 @@ def make_dirs(model_dir, log_dir):
         os.makedirs(log_dir)
 
 
-def adjust_learning_rate(optimizer, epoch, max_epoch, init_lr, power=0.9):
-    """Adjust learning rate using polynomial decay"""
-    lr = init_lr * (1 - epoch / max_epoch) ** power
-    for param_group in optimizer.param_groups:
-        param_group['lr'] = lr
-    return lr
+# def adjust_learning_rate(optimizer, epoch, max_epoch, init_lr, power=0.9):
+#     """Adjust learning rate using polynomial decay"""
+#     lr = init_lr * (1 - epoch / max_epoch) ** power
+#     for param_group in optimizer.param_groups:
+#         param_group['lr'] = lr
+#     return lr
 
 
 def train():
     # 训练参数
     lr = 0.0001     # 学习率
     alpha = 1.0     # 梯度损失权重
-    sim_loss = "mind" # 相似性损失函数
+    sim_loss = "ncc" # 相似性损失函数
     gpu = 0         # GPU ID
     
     # 训练参数设置
@@ -76,8 +75,8 @@ def train():
     batch_size = 1  # 批次大小
     
     # 数据目录
-    moving_dir = r'E:\RDP\data\train_1\moving'
-    fixed_dir = r'E:\RDP\data\train_1\fixed'
+    moving_dir = './data/train/moving'
+    fixed_dir = './data/train/fixed'
     
     # 创建保存目录
     model_dir = 'VoxelMorph/models/'
@@ -88,7 +87,7 @@ def train():
     device = torch.device(f'cuda:{gpu}' if torch.cuda.is_available() else 'cpu')
     
     # 日志文件
-    log_name = f"{max_epoch}_{lr}_{alpha}_paired"
+    log_name = f"{max_epoch}_{lr}_{alpha}_{sim_loss}_paired"
     print("log_name: ", log_name)
     f = open(os.path.join(log_dir, log_name + ".txt"), "w")
     
